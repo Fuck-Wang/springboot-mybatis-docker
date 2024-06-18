@@ -1,0 +1,20 @@
+
+docker exec -it mongodb bash进入mongo容器后执行：
+
+# 进入shell
+mongosh
+
+#切换到admin管理员数据库
+use admin
+
+#验证管理员，验证成功才能给数据库创建用户
+db.auth("kuan", "111111")
+
+#切换到mybatis-mongodb数据库
+use mybatis-mongodb
+
+#上面管理员用户kuan被db.auth之后，才能给mybatis_mongodb数据库创建用户
+db.createUser({user: "kuan", pwd: "111111", roles: [{role: "root", db: "admin"}]})
+
+#验证mybatis_mongodb数据库是否成功添加用户kuan
+db.auth("kuan", "111111")
