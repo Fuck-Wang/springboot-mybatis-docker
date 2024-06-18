@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>bilibili-websocket</title>
+</head>
+<body>
+
+</body>
+
+<script>
+  let ws = new WebSocket("ws://localhost:8080/myWs");
+  ws.onopen=function () {
+    ws.send("日你妈，劳资来建立连接了");
+  }
+  ws.onmessage=function (message) {
+    console.log("收到来自服务器回复：" + message.data);
+  }
+</script>
+</html>

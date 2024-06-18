@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.StudentDao">
+
+    <insert id="saveAll" useGeneratedKeys="true" keyProperty="students.id" keyColumn="id"
+            parameterType="java.util.List">
+        insert into `student`(`stu_no`, `name`, `point`, `grade_id`) values
+        <foreach collection="students" separator="," index="index" item="student">
+            (#{student.stuNo}, #{student.name}, #{student.point}, #{student.gradeId})
+        </foreach>
+    </insert>
+
+    <resultMap id="studentMap" type="com.example.entity.Student">
+        <id property="id" column="stu_id"/>
+        <result property="stuNo" column="stu_no"/>
+        <result property="name" column="stu_name"/>
+        <result property="point" column="stu_point"/>
+        <association property="grade" javaType="com.example.entity.Grade">
+            <id property="id" column="gr_id"/>
+            <result property="name" column="gr_name"/>
+        </association>
+        <collection property="subjectAndStudents" javaType="com.example.entity.SubjectAndStudent">
+            <id property="id" column="ss_id"/>
+            <association property="subject" javaType="com.example.entity.Subject">
+                <id property="id" column="sub_id"/>
+                <result property="name" column="sub_name"/>
+            </association>
+        </collection>
+    </resultMap>
+    <select id="findByPageIndex" resultMap="studentMap">
+        SELECT
+             -- 学生
+             stu.id      as stu_id,
+             stu.name    as stu_name,
+             stu.stu_no  as stu_no,
+             stu.point as stu_point,
+             -- 中间表
+             sub_stu.id  as ss_id,
+             -- 科目表
+             sub.id      as sub_id,
+             sub.name    as sub_name,
+             -- 班级表
+             gr.id       as gr_id,
+             gr.name     as gr_name
+        FROM (select * from student limit ${startIndex}, ${offset}) stu
+             left join subject_and_student sub_stu on (stu.id = sub_stu.student_id)
+             left JOIN subject sub on (sub_stu.subject_id = sub.id)
+             LEFT JOIN grade gr on (stu.grade_id = gr.id)
+    </select>
+</mapper>

@@ -1,0 +1,42 @@
+services:
+  mysql:
+    image: 'mysql:latest'
+    environment:
+      - 'MYSQL_PASSWORD=111111'
+      - 'MYSQL_ROOT_PASSWORD=root'
+      - 'MYSQL_USER=wck'
+    ports:
+      - '3306':'3306'
+    volumes:
+      - sql-volume:/data
+    networks:
+      - mybatis-network
+
+  redis:
+    build: ./redis
+    hostname: 'redis'
+    ports:
+      - '6379':'6379'
+    volumes:
+      - reids-volume:/data
+    networks:
+      - mybatis-network
+
+  mongodb:
+    image: 'mongo'
+    volumes:
+      - mongo-volume:/data
+    networks:
+      - mybatis-network
+
+volumes:
+  sql-volume:
+    external: true
+  redis_volume:
+    external: true
+  mongo-volume:
+    external: true
+
+networks:
+  mybatis-network:
+    external: true
